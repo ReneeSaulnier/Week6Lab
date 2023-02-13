@@ -35,8 +35,7 @@ public class ShoppingListServlet extends HttpServlet {
             return;
         }
         
-    getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
-    
+    getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);   
 }
 
     @Override
@@ -46,6 +45,7 @@ public class ShoppingListServlet extends HttpServlet {
             HttpSession session = request.getSession();
             String action = request.getParameter("action");
             String username = request.getParameter("username");
+            String itemname = request.getParameter("itemname");
             String item = request.getParameter("itemlist");
             ArrayList<String> items;
             
@@ -55,12 +55,8 @@ public class ShoppingListServlet extends HttpServlet {
                 items = (ArrayList<String>) session.getAttribute("items");
             }
             
-            if(username == null || username.equals("")){
-                request.setAttribute("message", "Please enter a username");
-            }
-            
             switch(action){
-                case "add": items.add(item);
+                case "add": items.add(itemname);
                             session.setAttribute("items", items);
                             getServletContext().getRequestDispatcher("/WEB-INF/shoppinglist.jsp").forward(request, response);
                             break;
@@ -75,9 +71,14 @@ public class ShoppingListServlet extends HttpServlet {
                                getServletContext().getRequestDispatcher("/WEB-INF/shoppinglist.jsp").forward(request, response);
                                break;
                                
-                case "register": session.setAttribute("username", username);
+                case "register": if(username == null || username.equals("")){
+                                 request.setAttribute("message", "Please enter a username");
+                                 getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
+                                }else{
+                                 session.setAttribute("username", username);
                                  getServletContext().getRequestDispatcher("/WEB-INF/shoppinglist.jsp").forward(request, response);
                                  break;
+                                }
             }   
         getServletContext().getRequestDispatcher("/WEB-INF/shoppinglist.jsp").forward(request, response);
     }
